@@ -1,0 +1,44 @@
+##  Visible tiles:   https://portal.nersc.gov/project/desi/users/sjbailey/tilepicker/ci-tiles.html
+##  BOSS footprint:  http://www.sdss3.org/dr9/algorithms/boss_tiling.php#footprint
+
+##  Generate tiles file for 1%. 
+py/gen_destiles.py
+
+addrepo ./desisim;  addrepo ./desisurvey;  addrepo ./surveysim
+
+surveyinit --config-file /global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020b-onepercent/config.yaml
+           --tiles-file /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/tiles/des.fits
+	   --output-path /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/
+
+surveysim --config-file /global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020b-onepercent/config.yaml
+          --tiles-file /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/tiles/des.fits
+	  --output-path /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/
+	  --rules /global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020b-onepercent/rules/rules-onepercent-south.yaml
+	  --debug
+
+##  Write .fits extracted from surveysim to txt for quicksurvey. 
+py/write_nights.py
+
+##
+export E2EDIR=/global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020c-onepercent/
+
+quicksurvey --fiberassign /global/common/software/desi/cori/desiconda/20190804-1.3.0-spec/code/fiberassign/master/bin/fiberassign
+            --exposures /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/complete_exposures_surveysim_fix.fits
+	    --fiberassign_dates $E2EDIR/nights.txt
+	    --targets_dir /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/targets
+	    --output_dir $E2EDIR/run/quicksurvey
+
+##  Patch assign dates. 
+../run/survey/assign_dates_surveysim.fits
+
+
+----   NOTES  ----
+
+IO limited.  Restrict size of skies to fiberassign.
+
+Targets & Truth limited to observed tiles in (this) quicksurvey. 
+
+
+----  FIX ME ----
+
+--  Only the first pass in gray, dark and bright should default assign date to the first day.

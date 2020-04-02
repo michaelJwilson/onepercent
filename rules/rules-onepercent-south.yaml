@@ -1,0 +1,46 @@
+#-------------------------------------------------------------------
+# Definition of tile groups that are separately scheduled
+# and prioritized. See doc/rules.rst for an explanation for the format.
+#-------------------------------------------------------------------
+
+# Implement a simple depth-first survey strategy that expands out from
+# DEC=2deg in the SGC, with all tiles included in the
+# schedule as soon as they have fibers assigned.
+
+SHI:
+    # Expand upwards from DEC=2deg in all passes.
+    cap: S
+    passes: 0,1,2,3,4,5,6,7,8,9,10
+    dec_min: 20
+    dec_order: +0.2
+    rules:
+        SHI(0):  { START: 1.0 }
+        SHI(1):  { START: 1.0 }
+        SHI(2):  { START: 1.0 }
+        SHI(3):  { START: 1.0 }
+        SHI(4):  { START: 1.0 }
+        SHI(5):  { START: 1.0 }
+        SHI(6):  { START: 1.0 }
+        SHI(7):  { START: 1.0 }
+        SHI(8):  { START: 1.0 }
+        SHI(9):  { START: 1.0 }
+        SHI(10): { START: 1.0 }
+
+SLO:
+    # Expand downwards from DEC=2deg in all passes.
+    cap: S
+    passes: 0,1,2,3,4,5,6,7,8,9,10
+    dec_max: 20
+    dec_order: -0.2
+    rules:
+        SLO(0):  { START: 1.0 }
+        SLO(1):  { START: 1.0 }
+        SLO(2):  { START: 1.0 }
+        SLO(3):  { START: 1.0 }
+        SLO(4):  { START: 1.0 }
+        SLO(5):  { START: 1.0 }
+        SLO(6):  { START: 1.0 }
+        SLO(7):  { START: 1.0 }
+        SLO(8):  { START: 1.0 }
+        SLO(9):  { START: 1.0 }
+        SLO(10): { START: 1.0 }

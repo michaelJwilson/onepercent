@@ -1,0 +1,9 @@
+run/
+desisim/
+desisurvey/
+daily/
+targets/
+surveysim/
+*/*/*~
+*/*~
+*~
