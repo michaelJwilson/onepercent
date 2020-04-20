@@ -2,14 +2,15 @@ import numpy as np
 import pylab as pl
 
 
-ss, Q0, Q2, Q4, Q6 = np.loadtxt('Qs_onepercent.txt', unpack=True)
+for linestyle, weighted in zip(['-', '--'], [True, False]):
+  ss, Q0, Q2, Q4, Q6 = np.loadtxt('Qs_onepercent_weighted_{}.txt'.format(np.int(weighted)), unpack=True)
 
-for ell, Q in zip([0, 2, 4, 6], [Q0, Q2, Q4, Q6]):
-  isin = ss > 5.0
+  for ell, Q in zip([0, 2, 4, 6], [Q0, Q2, Q4, Q6]):
+    isin = ss > 5.0
 
-  norm = Q0[isin][0]
+    norm = Q0[isin][0]
   
-  pl.semilogx(ss[isin], np.abs(Q[isin]) / norm, label=r'$\ell={}$'.format(ell), marker='^')
+    pl.semilogx(ss[isin], np.abs(Q[isin]) / norm, label=r'$\ell={}$'.format(ell), marker='^', linestyle=linestyle)
 
 pl.xlim(5., 700.)
 pl.xlabel(r'$s \ [\rm{Mpch} / h]$')

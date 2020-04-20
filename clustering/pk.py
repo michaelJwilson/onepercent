@@ -19,7 +19,7 @@ setup_logging()
 
 # comm              = CurrentMPIComm.get()
 
-weighted            = False
+weighted            = True
 
 # Fiducial BOSS DR12 cosmology
 h                   = 0.676
@@ -38,7 +38,8 @@ if not weighted:
 
 else:
   randoms           = FITSCatalog(root + 'run/catalogs/dark/LRG_oneper_clus.ran.fits')
-
+  randoms['Weight'] = randoms['WEIGHT']
+  
 lrgs                = (data['DESI_TARGET'] & desi_mask["LRG"]) != 0
 
 data                = data[lrgs & (data['ZWARN'] == 0) & (data['Z'] > 0.5) & (data['Z'] < 1.0)]
@@ -83,23 +84,28 @@ pl.show()
 '''
 
 # initialize the FKP source
-fkp                    = FKPCatalog(data, randoms)
+fkp                       = FKPCatalog(data, randoms)
 
-fkp['data/NZ']         = data['NZ']
-fkp['randoms/NZ']      = randoms['NZ']
+fkp['data/NZ']           = data['NZ']
+fkp['randoms/NZ']        = randoms['NZ']
 
 # FKP weights.
-fkp['data/FKPWeight']    = 1.0 / (1 + fkp['data/NZ'] * 1e4)
-fkp['randoms/FKPWeight'] = 1.0 / (1 + fkp['randoms/NZ'] * 1e4)
+fkp['data/FKPWeight']    = 1.0 / (1 + fkp['data/NZ'] * 1.e4)
+fkp['randoms/FKPWeight'] = 1.0 / (1 + fkp['randoms/NZ'] * 1.e4)
 
 # Completeness weights, defined by number density -> w x number density. 
-fkp['data/Weight']    = data['Weight']
-fkp['randoms/Weight'] = randoms['Weight']
+fkp['data/Weight']       = data['Weight']
+fkp['randoms/Weight']    = randoms['Weight']
 
-mesh                  = fkp.to_mesh(Nmesh=512, nbar='NZ', comp_weight='Weight', fkp_weight='FKPWeight', window='tsc', interlaced=True)
+window                   = 'tsc'
+mesh                     = fkp.to_mesh(Nmesh=512, nbar='NZ', comp_weight='Weight', fkp_weight='FKPWeight', window=window, interlaced=True, compensated=True)
 
-poles                 = [0, 2, 4]
-r                     = ConvolvedFFTPower(mesh, poles=poles, dk=0.075, kmin=0.01)
+# apply correction for the window to the mesh.
+# compensation           = mesh.CompensateCIC if window == 'CIC' else mesh.CompensateTSC
+# mesh                   = mesh.apply(compensation, kind='circular', mode='complex')
+
+poles                    = [0, 2, 4]
+r                        = ConvolvedFFTPower(mesh, poles=poles, dk=0.01, kmin=0.01)
 '''
 for key in r.attrs:
     print("%s = %s" % (key, str(r.attrs[key])))
@@ -124,6 +130,9 @@ pl.show()
 # and save!
 output_dir  = "/global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020f-onepercent/clustering/pk/"
 output      = os.path.join(output_dir, "oneper_weighted_{}.json".format(np.int(weighted)))
+
+if os.path.exists(output):
+    os.remove(output)
 
 r.save(output)
 

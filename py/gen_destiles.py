@@ -47,7 +47,7 @@ tiles.pprint(max_width=-1)
 tiles      = tiles[tiles['IN_DESI'] > 0]
 
 # DES
-tiles      = tiles[(tiles['RA'] > 0.) & (tiles['RA'] < 20.) & (tiles['DEC'] < 5.) & (tiles['DEC'] > 0.)]
+tiles      = tiles[(tiles['RA'] > 0.) & (tiles['RA'] < 20.) & (tiles['DEC'] < 6.) & (tiles['DEC'] > -1.)]
 
 #
 # tiles    = tiles[tiles['PROGRAM'] != 'BRIGHT']
@@ -62,7 +62,7 @@ tiles.sort('TILEID')
 
 s         = get_tile_radius_deg() * np.ones_like(tiles['DEC'])
 
-circles(tiles['RA'], tiles['DEC'], s=s, ec='b', facecolor='None', lw=1, alpha=0.2)
+circles(tiles['RA'], tiles['DEC'], s=s, ec='b', facecolor='None', lw=1, alpha=0.1)
 
 pl.show()
 

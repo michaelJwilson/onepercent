@@ -1,0 +1,28 @@
+Fri Apr 17 18:31:32 2020: [PE_20]:_pmi_mmap_tmp: Warning bootstrap barrier failed: num_syncd=6, pes_this_node=8, timeout=180 secs
+Fri Apr 17 18:31:47 2020: [PE_18]:_pmi_mmap_tmp: Warning bootstrap barrier failed: num_syncd=6, pes_this_node=8, timeout=180 secs
+Fri Apr 17 18:31:47 2020: [PE_18]:_pmi_init:_pmi_mmap_init returned -1
+[Fri Apr 17 18:31:47 2020] [c10-0c1s2n0] Fatal error in PMPI_Init_thread: Other MPI error, error stack:
+MPIR_Init_thread(537): 
+MPID_Init(246).......: channel initialization failed
+MPID_Init(647).......:  PMI2 init failed: 1 
+srun: error: nid01992: task 18: Aborted
+srun: Terminating job step 29785475.0
+slurmstepd: error: *** STEP 29785475.0 ON nid01842 CANCELLED AT 2020-04-17T18:31:47 ***
+srun: error: nid01992: tasks 16-17,19-20,22: Terminated
+srun: error: nid12990: tasks 41,43: Terminated
+srun: error: nid12956: task 35: Terminated
+srun: error: nid01992: task 21: Terminated
+srun: error: nid12990: task 44: Terminated
+srun: error: nid12990: tasks 40,42: Terminated
+srun: error: nid12956: task 37: Terminated
+srun: error: nid01992: task 23: Terminated
+srun: error: nid01935: task 15: Terminated
+srun: error: nid01935: tasks 8-9,11,13-14: Terminated
+srun: error: nid12956: tasks 32,38: Terminated
+srun: error: nid01935: task 10: Terminated
+srun: error: nid01935: task 12: Terminated
+srun: error: nid12990: tasks 39,45: Terminated
+srun: error: nid12956: tasks 33-34,36: Terminated
+srun: error: nid12721: tasks 24-31: Terminated
+srun: error: nid01842: tasks 0-7: Terminated
+srun: Force Terminated job step 29785475.0

@@ -30,15 +30,10 @@ cosmo               = cosmology.Cosmology(h=h, Omega_b=Ob0, Omega_cdm=Ocdm0, N_u
 
 root                = '/global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020f-onepercent/'
 
-output_dir          = "/global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020f-onepercent/clustering/pk/"
-output              = os.path.join(output_dir, "oneper.json")
-
-r                   = ConvolvedFFTPower.load(output)
-
 #
 k                   = np.logspace(-5, 1, 500)
 
-linb                = np.sqrt(8.)
+linb                = np.sqrt(6.5)
 
 c                   = cosmology.Planck15
 Plin                = cosmology.LinearPower(c, redshift=0.7, transfer='CLASS')
@@ -48,7 +43,7 @@ Pzel                = cosmology.ZeldovichPower(c, redshift=0.7)
 # Windowed.
 s, xi               = P2xi(k)(Pnl(k))
 
-ss, Q0, _, _, _     = np.loadtxt('Qs_onepercent.txt', unpack=True)
+ss, Q0, _, _, _     = np.loadtxt('Qs_onepercent_weighted_1.txt', unpack=True)
 isin                = ss > 5.0
 
 Q0                  = Q0[isin] / Q0[isin][0]
@@ -64,15 +59,29 @@ plt.loglog(k, linb * linb * Pnl(k), c='k')
 
 k, P                = xi2P(s)(xi)
 
-plt.loglog(k, linb * linb * P, c='cyan', alpha=0.5)
+plt.loglog(k, linb * linb * P, alpha=0.5, c='tab:blue')
 
 #
-poles               = r.poles
+for marker, weighted in zip(['s', '^'], [0,1]):
+  output_dir          = "/global/homes/m/mjwilson/desi/survey-validation/svdc-spring2020f-onepercent/clustering/pk/"
+  output              = os.path.join(output_dir, "oneper_weighted_{:d}.json".format(weighted))
 
-pl.axhline(r.attrs['shotnoise'], xmin=0.0, xmax=1.0, c='k', alpha=0.3)
+  r                   = ConvolvedFFTPower.load(output)
 
-pl.errorbar(poles['k'],  poles['power_0'] - r.attrs['shotnoise'], (poles['power_0'] - r.attrs['shotnoise']) / np.sqrt(poles['modes']), label=r'$P_0$', lw=0.0, elinewidth=1.0, fmt='^')
-pl.errorbar(poles['k'], -poles['power_2'], poles['power_2'] / np.sqrt(poles['modes']), label=r'$P_2$', lw=0.0, elinewidth=0.2, fmt='^')
+  poles               = r.poles
+
+  pl.axhline(r.attrs['shotnoise'], xmin=0.0, xmax=1.0, c='k', alpha=0.3)
+
+  # label             = r'$P_0$'
+  label               = 'Weighted {}'.format(weighted)
+  
+  pl.errorbar(poles['k'],  poles['power_0'].real - r.attrs['shotnoise'], (poles['power_0'].real - r.attrs['shotnoise']) / np.sqrt(poles['modes']), label=label, lw=0.0, elinewidth=1.0, fmt='^', markersize=3)
+  # pl.errorbar(poles['k'], -poles['power_2'], poles['power_2'] / np.sqrt(poles['modes']), label=r'$P_2$', lw=0.0, elinewidth=0.2, fmt='^', markersize=3)
+
+  print('\n\n----  Weighted {} ----'.format(np.int(weighted)))
+  
+  for i, k, in enumerate(poles['k']):
+    print('{:.6f} \t {:.6f}'.format(k, poles['power_0'][i].real - r.attrs['shotnoise']))
 
 pl.xscale('log')
 pl.yscale('log')
@@ -81,7 +90,7 @@ pl.yscale('log')
 plt.legend(loc=0, frameon=False)
 plt.xlabel(r"$k$ [$h \ \mathrm{Mpc}^{-1}$]")
 plt.ylabel(r"$P_\ell$ [$h^{-3} \mathrm{Mpc}^3$]")
-plt.xlim(0.01, 1.00)
+plt.xlim(0.01, 1.50)
 plt.ylim(1.e2, 2.e5)
 
 pl.show()

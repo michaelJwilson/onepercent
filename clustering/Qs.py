@@ -14,6 +14,8 @@ from   astropy.table               import  Table, join
 from   desitarget.targets          import  desi_mask, bgs_mask, mws_mask
 
 
+weighted   = True
+
 truth      = Table.read('../run/targets/truth-dark.fits')
 targets    = Table.read('../run/targets/targets-dark.fits')
 
@@ -24,15 +26,20 @@ targets    = Table(join(targets, truth, join_type='left', keys='TARGETID').as_ar
 lrgs       = (targets['DESI_TARGET'] & desi_mask["LRG"]) != 0
 lrgs       = targets[lrgs]
 
-zs         = lrgs['TRUEZ']
+# zs       = lrgs['TRUEZ']
 
-rand       = Table(Table.read('../run/randoms/dark/randoms_oneper_darktime_jmtl.fits').as_array())
+rand       = Table(Table.read('../run/catalogs/dark/LRG_oneper_clus.ran.fits').as_array())
 
+if not weighted:
+  rand['WEIGHT'] = np.ones_like(rand['Z'])
+  
+zs         = rand['Z']
+  
 np.random.seed(seed=314)
 
-zs         = np.random.choice(zs, replace=True, size=len(rand)).astype(np.float64)
+# zs       = np.random.choice(zs, replace=True, size=len(rand)).astype(np.float64)
 
-rand['Z']  = zs
+# rand['Z']  = zs
 
 # rand.write('../run/randoms/dark/randoms_oneper_darktime_jmtl_truez.fits', format='fits', overwrite=True)
 
@@ -44,7 +51,7 @@ cosmology = 1
 
 # Create the bins array
 rmin      = 0.1
-rmax      = 700.0
+rmax      = 1.e3
 nbins     = 50
 rbins     = np.logspace(np.log(rmin), np.log(rmax), nbins + 1, base=np.exp(1))
 
@@ -60,24 +67,27 @@ dmu       = mu_max / nmu_bins
 # Specify that an autocorrelation is wanted
 autocorr  = 1
 
-sampling  = 50
+sampling  = 5
 
 ras       = np.array(rand['RA'])[::sampling]
 decs      = np.array(rand['DEC'])[::sampling]
+ws        = np.array(rand['WEIGHT'])[::sampling]
 zs        = zs[::sampling]
 czs       = const.c.to('km/s').value * zs
 
 # Mpch/h
 czs         = Planck13.comoving_distance(zs).value * Planck13.h
 
-ws          = np.ones_like(czs)
-
-result      = DDsmu_mocks(autocorr, cosmology, nthreads, mu_max, nmu_bins, rbins, ras, decs, czs, is_comoving_dist=True, weights1=ws, output_savg=True)
+# https://corrfunc.readthedocs.io/en/master/modules/weighted_correlations.html#weighted-correlations
+result      = DDsmu_mocks(autocorr, cosmology, nthreads, mu_max, nmu_bins, rbins, ras, decs, czs, is_comoving_dist=True, weights1=ws, output_savg=True, weight_type='pair_product')
 
 # ('smin', 'smax', 'savg', 'mumax', 'npairs', 'weightavg')
 ss          = (result['smin'] + result['smax']) / 2.
 mus         = result['mumax'] - dmu / 2.
-ns          = result['npairs']
+ns          = result['weightavg']
+
+if not weighted:
+  assert  np.allclose(result['weightavg'], result['npairs'])
 
 us          = np.unique(ss)
 
@@ -113,6 +123,6 @@ for ell in [0, 2, 4, 6]:
 #
 result = np.array(result).T
 
-np.savetxt('Qs_onepercent.txt', result)
+np.savetxt('Qs_onepercent_weighted_{}.txt'.format(np.int(weighted)), result)
 
 print('\n\nDone.\n\n')
