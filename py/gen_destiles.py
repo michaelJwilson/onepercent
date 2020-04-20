@@ -58,7 +58,7 @@ tiles.sort('TILEID')
 # max_width=-1
 # tiles.pprint(max_width=-1)
 
-tiles.write('/global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/tiles/des.fits', format='fits', overwrite=True)
+# tiles.write('/global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/tiles/des.fits', format='fits', overwrite=True)
 
 s         = get_tile_radius_deg() * np.ones_like(tiles['DEC'])
 
