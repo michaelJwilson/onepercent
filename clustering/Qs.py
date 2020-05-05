@@ -1,4 +1,5 @@
 import sys
+import pickle
 import numpy                       as      np
 import fitsio
 import astropy.units               as      u
@@ -65,15 +66,15 @@ nmu_bins  = 100
 dmu       = mu_max / nmu_bins
 
 # Specify that an autocorrelation is wanted
-autocorr  = 1
+autocorr    = 1
 
-sampling  = 5
+sampling    = 25
 
-ras       = np.array(rand['RA'])[::sampling]
-decs      = np.array(rand['DEC'])[::sampling]
-ws        = np.array(rand['WEIGHT'])[::sampling]
-zs        = zs[::sampling]
-czs       = const.c.to('km/s').value * zs
+ras         = np.array(rand['RA'])[::sampling]
+decs        = np.array(rand['DEC'])[::sampling]
+ws          = np.array(rand['WEIGHT'])[::sampling]
+zs          = zs[::sampling]
+czs         = const.c.to('km/s').value * zs
 
 # Mpch/h
 czs         = Planck13.comoving_distance(zs).value * Planck13.h
@@ -81,13 +82,16 @@ czs         = Planck13.comoving_distance(zs).value * Planck13.h
 # https://corrfunc.readthedocs.io/en/master/modules/weighted_correlations.html#weighted-correlations
 result      = DDsmu_mocks(autocorr, cosmology, nthreads, mu_max, nmu_bins, rbins, ras, decs, czs, is_comoving_dist=True, weights1=ws, output_savg=True, weight_type='pair_product')
 
+with open(r'QS_weighted_{}_corrfunc.pkl'.format(np.int(weighted)), 'wb') as out:
+    pickle.dump(result, out)
+
 # ('smin', 'smax', 'savg', 'mumax', 'npairs', 'weightavg')
 ss          = (result['smin'] + result['smax']) / 2.
 mus         = result['mumax'] - dmu / 2.
-ns          = result['weightavg']
+ns          = result['npairs']
 
-if not weighted:
-  assert  np.allclose(result['weightavg'], result['npairs'])
+#    if not weighted:
+#        assert  np.allclose(result['weightavg'], result['npairs'])
 
 us          = np.unique(ss)
 
@@ -117,7 +121,7 @@ for ell in [0, 2, 4, 6]:
 # pl.xlim(0.1, 500.)
 # pl.ylim(0.0,  1.2)
 
-#pl.legend()
+# pl.legend()
 # pl.show()
 
 #

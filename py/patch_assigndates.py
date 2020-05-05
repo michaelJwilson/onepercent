@@ -2,7 +2,7 @@ import astropy.io.fits as fits
 
 from astropy.table import Table, join
 
-tiles   = Table(fits.open('../run/survey/tiles/des.fits')[1].data)
+tiles   = Table(fits.open('../run/survey/tiles/onepercent.fits')[1].data)
 dat     = Table(fits.open('../run/survey/assign_dates_surveysim.fits')[1].data)
 
 tiles   = join(tiles, dat, join_type='left', keys='TILEID')

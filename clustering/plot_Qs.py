@@ -12,6 +12,8 @@ for linestyle, weighted in zip(['-', '--'], [True, False]):
   
     pl.semilogx(ss[isin], np.abs(Q[isin]) / norm, label=r'$\ell={}$'.format(ell), marker='^', linestyle=linestyle)
 
+  break
+    
 pl.xlim(5., 700.)
 pl.xlabel(r'$s \ [\rm{Mpch} / h]$')
 pl.ylabel(r'$Q_{\ell}(s)$')

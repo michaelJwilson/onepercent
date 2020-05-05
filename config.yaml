@@ -19,10 +19,10 @@ location:
 #-------------------------------------------------------------------
 
 # Survey nominally starts on night of this date. Format is YYYY-MM-DD.
-first_day: 2020-09-15
+first_day: 2020-11-01
 
 # Survey nominally ends on morning of this date. Format is YYYY-MM-DD.
-last_day:  2020-10-15
+last_day:  2021-01-01
 
 # Nominal monsoon shutdown start/stop dates each year.
 # Start date marks first night of monsoon shutdown each year.
@@ -43,7 +43,7 @@ monsoon:
 
 # Number of nights reserved for engineering / guest observing
 # during each full moon.
-full_moon_nights: 5
+full_moon_nights: 7
 
 #-------------------------------------------------------------------
 # Definition of the DARK / GRAY / BRIGHT nominal programs based on
@@ -79,10 +79,12 @@ min_altitude: 30 deg
 max_hour_angle: 75 deg
 
 # Time required to setup for a new field, including slew, fiber positioning, etc.
-new_field_setup : 120 s
+# 50% overhead.
+new_field_setup : 180 s
 
 # Time required to setup for re-observing the same field.
-same_field_setup : 60 s
+# 50% overhead
+same_field_setup : 90 s
 
 # Maximum time allowed for a single exposure before we force a cosmic split.
 cosmic_ray_split: 20 min
@@ -92,10 +94,11 @@ min_exposures: 2
 
 # The target SNR**2 for each program is specified as the total exposure time
 # required at nominal observing conditions.
+# 1.2 x exposure time. 
 nominal_exposure_time:
-    DARK: 1000 s
-    GRAY: 1000 s
-    BRIGHT: 300 s
+    DARK: 1200 s
+    GRAY: 1200 s
+    BRIGHT: 360 s
     
 nominal_conditions:
     # Moon below the horizon
@@ -147,8 +150,8 @@ fiber_assignment_order:
   P6:  P5 delay 0
   P7:  P5+P6 delay 0
   P8:  P0 delay 0
-  P9:  P3+P4 delay 0
-  P10: P6+P7 delay 0
+  P9:  P3 delay 0
+  P10: P6 delay 0
 
 # Nominal tile radius for determining whether two tiles overlap.
 tile_radius: 1.63 deg
@@ -166,9 +169,9 @@ tile_radius: 1.63 deg
 # - Pass numbers are arbitrary integers and do not need to be consecutive
 #   or dense. However use of non-standard values will generally require
 #   an update to fiber_assignment_order, above.
-tiles_file: /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/tiles/des.fits
+tiles_file: /global/cscratch1/sd/mjwilson/svdc-spring2020g-onepercent/survey/tiles/onepercent.fits
 
 # Base path to pre-pended to all non-absolute paths used for reading and
 # writing files managed by this package. The pattern {...} will be expanded
 # using environment variables.
-output_path: /global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/
+output_path: /global/cscratch1/sd/mjwilson/svdc-spring2020g-onepercent/survey/

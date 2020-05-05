@@ -8,7 +8,7 @@ from   desisurvey.utils import get_date
 from   desimodel.footprint import is_point_in_desi
 
 
-dat          = Table(fits.open('/global/cscratch1/sd/mjwilson/svdc-spring2020e-onepercent/survey/exposures_surveysim.fits')[1].data)
+dat          = Table(fits.open('/global/cscratch1/sd/mjwilson/svdc-spring2020g-onepercent/survey/exposures_surveysim.fits')[1].data)
 dat['NIGHT'] = ['               '] * len(dat)
 
 for i, mjd in enumerate(dat['MJD']):
@@ -17,14 +17,8 @@ for i, mjd in enumerate(dat['MJD']):
 
 # dat.pprint(max_width=-1)
 
-# dat.write('/global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/exposures_surveysim_fix.fits', format='fits', overwrite=True)
+dat.sort('MJD')
 
-complete = dat[dat['SNR2FRAC'] >= 1.0]
-complete.sort('TILEID')
+dat['EXPID'] = np.arange(len(dat))
 
-# complete = unique(complete, keys='TILEID')
-
-complete.pprint(max_lines=-1)
-
-# complete.write('/global/cscratch1/sd/mjwilson/svdc-spring2020b-onepercent/survey/complete_exposures_surveysim_fix.fits', format='fits', overwrite=True)
-
+dat.write('/global/cscratch1/sd/mjwilson/svdc-spring2020g-onepercent/survey/exposures_surveysim_fix.fits', format='fits', overwrite=True)

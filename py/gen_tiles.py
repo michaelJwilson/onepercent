@@ -25,7 +25,7 @@ ngc        = (tiles['RA'] > 100.) & (tiles['RA'] < 275.)
 tiles      = tiles[~ngc]
 
 # DARK
-tiles      = tiles[(tiles['PROGRAM'] == 'DARK') | (tiles['PROGRAM'] == 'GREY') | (tiles['PROGRAM'] == 'GRAY')]
+tiles      = tiles[(tiles['PROGRAM'] == 'DARK') | (tiles['PROGRAM'] == 'GREY')]
 
 # dec cut.
 tiles      = tiles[(tiles['DEC'] > 15.0) & (tiles['DEC'] < 25.0)] 
